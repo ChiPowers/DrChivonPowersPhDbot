@@ -33,6 +33,7 @@ from flask import make_response
 app = Flask(__name__)
 
 
+###weather webhook example code starts below
 @app.route('/webhook', methods=['POST'])
 def webhook():
     req = request.get_json(silent=True, force=True)
@@ -48,31 +49,78 @@ def webhook():
     r.headers['Content-Type'] = 'application/json'
     return r
 
-
 def processRequest(req):
-    if req.get("result").get("action") != "yahooWeatherForecast":
+    action = getActionName(req)
+
+    print("Action Name:")
+    print(action)
+
+    if action == "getpublications":
+        return makeWebhookResult(getPubs(req))
+    elif action == "getLIprofile ":
+        return makeWebhookResult(getLinkedIn(req))
+    else:
         return {}
-    baseurl = "https://query.yahooapis.com/v1/public/yql?"
-    yql_query = makeYqlQuery(req)
-    if yql_query is None:
-        return {}
-    yql_url = baseurl + urlencode({'q': yql_query}) + "&format=json"
-    result = urlopen(yql_url).read()
-    data = json.loads(result)
-    res = makeWebhookResult(data)
-    return res
+
+# Standard method to pull action name from request.
+def getActionName(req):
+    return req.get("result").get("action")
 
 
-def makeYqlQuery(req):
-    result = req.get("result")
-    parameters = result.get("parameters")
-    city = parameters.get("geo-city")
-    if city is None:
-        return None
+# Standard method to get a result parameter value.
+def getResultParameter(req, name):
+    data = ''
+    context = getAllResultParameters(req)
+    try:
+        if (context and context[name] != ''):
+            data = context[name]
+    except:
+        print('Could not find result parameter - ' + name + '.')
 
-    return "select * from weather.forecast where woeid in (select woeid from geo.places(1) where text='" + city + "')"
+    return data
 
+# Standard method to set a result parameter value.
+def setResultParameter(req, name, value):
+    #req['result']['contexts'][0]['parameters'][name] = value
+    req['result']['parameters'][name] = value
 
+# Standard method to get ALL result parameter object.
+def getAllResultParameters(req):
+    data = {}
+    #if (req['result'] and req['result']['contexts'] and req['result']['contexts'][0]):
+    #    data = req['result']['contexts'][0]['parameters']
+    if (req['result'] and req['result']['parameters']):
+        data = req['result']['parameters']
+    return data
+
+# Standard method to get ALL result context parameter object.
+def getAllResultContextParameters(req):
+    data = {}
+    if (req['result'] and req['result']['contexts'] and req['result']['contexts'][0]):
+        data = req['result']['contexts'][0]['parameters']
+    return data
+
+# Standard method to get a result context parameter value.
+def getResultContextParameter(req, name):
+    data = ''
+    context = getAllResultContextParameters(req)
+    try:
+        if (context and context[name] != ''):
+            data = context[name]
+    except:
+        print('Could not find result context parameter - ' + name + '.')
+
+    return data
+
+# def makeWebhookResult(data):
+#
+#     print("Data Return:")
+#     print(data)
+#
+#     if data:
+#         return data
+#     else:
+#         return {}
 def makeWebhookResult(data):
     query = data.get('query')
     if query is None:
@@ -98,8 +146,7 @@ def makeWebhookResult(data):
 
     # print(json.dumps(item, indent=4))
 
-    speech = "Today in " + location.get('city') + ": " + condition.get('text') + \
-             ", the temperature is " + condition.get('temp') + " " + units.get('temperature')
+    speech = "WAY TO GO! You have hooked your webhook up successfully.")
 
     print("Response:")
     print(speech)
@@ -109,7 +156,7 @@ def makeWebhookResult(data):
         "displayText": speech,
         # "data": data,
         # "contextOut": [],
-        "source": "apiai-weather-webhook-sample"
+        "source": "DrChivonPowersPhD Bot"
     }
 
 
