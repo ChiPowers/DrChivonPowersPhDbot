@@ -57,8 +57,10 @@ def processRequest(req):
 
     if action == "getpublications":
         return makeWebhookResult(getPubs(req))
-    elif action == "getLIprofile ":
+    elif action == "getLIprofile":
         return makeWebhookResult(getLinkedIn(req))
+    elif action == "checkwebhook":
+        return makeWebhookResult(req)
     else:
         return {}
 
