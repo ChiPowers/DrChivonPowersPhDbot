@@ -146,7 +146,7 @@ def makeWebhookResult(data):
 
     # print(json.dumps(item, indent=4))
 
-    speech = "WAY TO GO! You have hooked your webhook up successfully.")
+    speech = "WAY TO GO! You have hooked your webhook up successfully."
 
     print("Response:")
     print(speech)
