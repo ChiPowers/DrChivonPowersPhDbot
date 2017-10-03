@@ -87,8 +87,6 @@ def setResultParameter(req, name, value):
 # Standard method to get ALL result parameter object.
 def getAllResultParameters(req):
     data = {}
-    #if (req['result'] and req['result']['contexts'] and req['result']['contexts'][0]):
-    #    data = req['result']['contexts'][0]['parameters']
     if (req['result'] and req['result']['parameters']):
         data = req['result']['parameters']
     return data
@@ -122,27 +120,27 @@ def getResultContextParameter(req, name):
 #     else:
 #         return {}
 def makeWebhookResult(data):
-    query = data.get('query')
-    if query is None:
-        return {}
-
-    result = query.get('results')
-    if result is None:
-        return {}
-
-    channel = result.get('channel')
-    if channel is None:
-        return {}
-
-    item = channel.get('item')
-    location = channel.get('location')
-    units = channel.get('units')
-    if (location is None) or (item is None) or (units is None):
-        return {}
-
-    condition = item.get('condition')
-    if condition is None:
-        return {}
+    # query = data.get('query')
+    # if query is None:
+    #     return {}
+    #
+    # result = query.get('results')
+    # if result is None:
+    #     return {}
+    #
+    # channel = result.get('channel')
+    # if channel is None:
+    #     return {}
+    #
+    # item = channel.get('item')
+    # location = channel.get('location')
+    # units = channel.get('units')
+    # if (location is None) or (item is None) or (units is None):
+    #     return {}
+    #
+    # condition = item.get('condition')
+    # if condition is None:
+    #     return {}
 
     # print(json.dumps(item, indent=4))
 
